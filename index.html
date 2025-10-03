@@ -1,0 +1,477 @@
+﻿<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+    <title>ADLN-Market - E-commerce Premium</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="main-header">
+        <!-- Coluna 1: Logo -->
+        <div class="header-logo-container">
+          <div class="logo-section">
+            <a href="index.html" class="logo-link">
+              <img src="commons/logo_adln.png" alt="ADLN Market Logo" class="logo-image">
+            </a>
+          </div>
+        </div>
+    
+    <!-- Coluna 2: Barra de Pesquisa -->
+    <div class="header-search-container">
+      <div class="search-wrapper">
+      <input type="text" id="search" placeholder="Buscar por nome...">
+      <select id="category">
+        <option value="">Todas categorias</option>
+      </select>
+        <button id="btnSearch" class="btn-search">Buscar</button>
+        <button id="btnReset" class="btn-reset">Limpar</button>
+      </div>
+    </div>
+    
+    <!-- Coluna 3: Ações -->
+    <nav class="header-nav-actions">
+      <button class="categories-btn" id="categoriesBtn">Categorias</button>
+      <button class="btn-login" id="loginBtn">Entrar</button>
+      <button class="btn-register" id="registerBtn">Abrir Conta</button>
+      <div class="user-menu" id="userMenu" style="display: none;">
+        <span class="user-name" id="userName"></span>
+        <div class="user-dropdown">
+          <button id="userProfile">Meu Perfil</button>
+          <button id="userOrders">Meus Pedidos</button>
+          <button id="logoutBtn">Sair</button>
+        </div>
+      </div>
+      <a href="cart.html" class="cart-icon-wrapper" id="cartIconWrapper">
+        <div class="cart-icon-bubble" id="cartItemCount">0</div>
+        🛒
+        <span>Carrinho</span>
+      </a>
+    </nav>
+  </header>
+
+  <!-- Hero Section - Carrossel de Banners com Efeito de Esmaecimento -->
+  <section class="hero-section">
+    <div class="carousel-container">
+      <div class="carousel-item active">
+        <img src="commons/banner_1.jpg" alt="Banner Promocional 1">
+      </div>
+      <div class="carousel-item">
+        <img src="commons/banner_2.jpg" alt="Banner Promocional 2">
+      </div>
+      <div class="carousel-item">
+        <img src="commons/banner_3.jpg" alt="Banner Promocional 3">
+      </div>
+      <div class="carousel-item">
+        <img src="commons/banner_4.jpg" alt="Banner Promocional 4">
+      </div>
+      <div class="carousel-item">
+        <img src="commons/banner_5.jpg" alt="Banner Promocional 5">
+      </div>
+      <div class="carousel-item">
+        <img src="commons/banner_6.jpg" alt="Banner Promocional 6">
+      </div>
+      <div class="carousel-item">
+        <img src="commons/banner_7.jpg" alt="Banner Promocional 7">
+      </div>
+    </div>
+    
+    <!-- Navegação do Carrossel -->
+    <button class="carousel-nav-btn carousel-prev" onclick="changeSlide(-1)">‹</button>
+    <button class="carousel-nav-btn carousel-next" onclick="changeSlide(1)">›</button>
+    
+    <!-- Indicadores de Slide -->
+    <div class="carousel-dots">
+      <span class="dot active" onclick="currentSlide(1)"></span>
+      <span class="dot" onclick="currentSlide(2)"></span>
+      <span class="dot" onclick="currentSlide(3)"></span>
+      <span class="dot" onclick="currentSlide(4)"></span>
+      <span class="dot" onclick="currentSlide(5)"></span>
+      <span class="dot" onclick="currentSlide(6)"></span>
+      <span class="dot" onclick="currentSlide(7)"></span>
+    </div>
+  </section>
+
+  <!-- Grade Principal de ConteÃºdo - Cards Modulares -->
+  <main class="content-grid">
+    <!-- Card 1: Produtos em Destaque -->
+    <div class="card">
+      <h2 class="card-title">Produtos em Destaque</h2>
+      <div class="card-content quad-grid">
+        <div class="quad-item">
+          <img src="https://via.placeholder.com/80x80/00d084/ffffff?text=FONE" alt="Fone Bluetooth">
+          <span class="product-name">Fone Bluetooth</span>
+        </div>
+        <div class="quad-item">
+          <img src="https://via.placeholder.com/80x80/00d084/ffffff?text=CALCA" alt="Calça Jeans">
+          <span class="product-name">Calça Jeans</span>
+        </div>
+        <div class="quad-item">
+          <img src="https://via.placeholder.com/80x80/00d084/ffffff?text=ASPIRADOR" alt="Aspirador Robô">
+          <span class="product-name">Aspirador Robô</span>
+        </div>
+        <div class="quad-item">
+          <img src="https://via.placeholder.com/80x80/00d084/ffffff?text=SMARTWATCH" alt="Smartwatch">
+          <span class="product-name">Smartwatch</span>
+        </div>
+      </div>
+      <a href="#" class="card-footer">Ver mais produtos</a>
+    </div>
+
+    <!-- Card 2: Ofertas Especiais -->
+    <div class="card">
+      <h2 class="card-title">Ofertas Especiais</h2>
+      <div class="card-content">
+        <img src="https://via.placeholder.com/300x200/ff6b6b/ffffff?text=OFERTA" alt="Oferta Especial" class="offer-image">
+        <div class="offer-info">
+          <div class="offer-discount">50% OFF</div>
+          <div class="offer-description">Produtos selecionados</div>
+        </div>
+      </div>
+      <a href="#" class="card-footer">Ver ofertas</a>
+    </div>
+
+    <!-- Card 3: Categorias Populares -->
+    <div class="card">
+      <h2 class="card-title">Categorias Populares</h2>
+      <div class="card-content quad-grid">
+        <div class="quad-item">
+          <div class="category-image-wrapper">
+            <img src="commons/categorias/eletronicos.jpg" alt="Eletrônicos" style="display: block; width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          <span class="category-name">Eletrônicos</span>
+        </div>
+        <div class="quad-item">
+          <div class="category-image-wrapper">
+            <img src="commons/categorias/roupas.jpg" alt="Roupas" style="display: block; width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          <span class="category-name">Roupas</span>
+        </div>
+        <div class="quad-item">
+          <div class="category-image-wrapper">
+            <img src="commons/categorias/casa_e_jardim.jpg" alt="Casa e Jardim" style="display: block; width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          <span class="category-name">Casa e Jardim</span>
+        </div>
+        <div class="quad-item">
+          <div class="category-image-wrapper">
+            <img src="commons/categorias/esportes.jpg" alt="Esportes" style="display: block; width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          <span class="category-name">Esportes</span>
+        </div>
+      </div>
+      <a href="#" class="card-footer">Explorar categorias</a>
+    </div>
+
+    <!-- Card 4: Novos Lançamentos -->
+    <div class="card">
+      <h2 class="card-title">Novos Lançamentos</h2>
+      <div class="card-content">
+        <img src="https://via.placeholder.com/300x200/6c5ce7/ffffff?text=LANCAMENTO" alt="Novo Lançamento" class="new-image">
+        <div class="new-info">
+          <div class="new-badge">NOVO</div>
+          <div class="new-description">Produtos inovadores</div>
+        </div>
+      </div>
+      <a href="#" class="card-footer">Ver lançamentos</a>
+    </div>
+  </main>
+
+  <div class="wrap">
+    <section id="produtos">
+
+    <div class="grid" id="productGrid"></div>
+    </section>
+
+    <footer class="pager">
+      <button id="prev">◀ Anterior</button>
+      <span id="pageInfo"></span>
+      <button id="next">Próxima ▶</button>
+    </footer>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-links">
+      <div class="footer-column">
+        <h4>Conheça-nos</h4>
+        <ul>
+          <li><a href="#">Sobre a ADLN-Market</a></li>
+          <li><a href="#">Trabalhe Conosco</a></li>
+          <li><a href="#">Imprensa</a></li>
+          <li><a href="#">Comunidade</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-column">
+        <h4>Ganhe Dinheiro Conosco</h4>
+        <ul>
+          <li><a href="#">Venda na ADLN-Market</a></li>
+          <li><a href="#">Seja um Afiliado</a></li>
+          <li><a href="#">Anuncie Seus Produtos</a></li>
+          <li><a href="#">Programa de Vendedores</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-column">
+        <h4>Deixe-nos Ajudar Você</h4>
+        <ul>
+          <li><a href="#">Sua Conta</a></li>
+          <li><a href="#">Seus Pedidos</a></li>
+          <li><a href="#">Ajuda e Suporte</a></li>
+          <li><a href="#" onclick="openShippingModal()">Frete e Entrega</a></li>
+          <li><a href="#">Devoluções e Reembolsos</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-column">
+        <h4>Formas de Pagamento</h4>
+        <div class="payment-grid">
+          <div class="payment-card" onclick="openPaymentModal('credit')">
+            <div class="payment-visual">
+              <svg viewBox="0 0 24 24" class="payment-icon">
+                <rect x="2" y="6" width="20" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                <path d="M2 10h20" stroke="currentColor" stroke-width="2"/>
+                <circle cx="18" cy="14" r="1" fill="currentColor"/>
+              </svg>
+            </div>
+            <span>Crédito</span>
+          </div>
+          
+          <div class="payment-card" onclick="openPaymentModal('debit')">
+            <div class="payment-visual">
+              <svg viewBox="0 0 24 24" class="payment-icon">
+                <rect x="2" y="6" width="20" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                <path d="M2 10h20" stroke="currentColor" stroke-width="2"/>
+                <rect x="4" y="12" width="4" height="2" fill="currentColor"/>
+              </svg>
+            </div>
+            <span>Débito</span>
+          </div>
+          
+          <div class="payment-card" onclick="openPaymentModal('pix')">
+            <div class="payment-visual">
+              <svg viewBox="0 0 24 24" class="payment-icon">
+                <path d="M12 2L2 7l10 5 10-5-10-5z" fill="none" stroke="currentColor" stroke-width="2"/>
+                <path d="M2 17l10 5 10-5" fill="none" stroke="currentColor" stroke-width="2"/>
+                <path d="M2 12l10 5 10-5" fill="none" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
+            <span>Pix</span>
+          </div>
+          
+          <div class="payment-card" onclick="openPaymentModal('boleto')">
+            <div class="payment-visual">
+              <svg viewBox="0 0 24 24" class="payment-icon">
+                <rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                <path d="M7 8h10M7 12h10M7 16h6" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
+            <span>Boleto</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <div class="footer-credits">
+        <p>Desenvolvido por Alunos - QA - Alan, Daniel, Larissa e Nilson</p>
+      </div>
+      <div class="footer-legal">
+        <p>© 2025 ADLN-Market.com, Inc. ou suas afiliadas</p>
+        <div class="footer-legal-links">
+          <a href="#">Termos de Uso</a>
+          <a href="#">Política de Privacidade</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Sidebar de Categorias - Design Clean -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <div class="categories-sidebar" id="categoriesSidebar">
+    <div class="sidebar-header">
+      <h3>Categorias</h3>
+      <button class="close-sidebar" id="closeSidebar">×</button>
+    </div>
+    <div class="categories-list" id="categoriesList">
+      <!-- Categorias serão carregadas dinamicamente -->
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <!-- Modal de Login -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal-content">
+      <div class="modal-logo">
+        <img src="commons/logo_adln.png" alt="ADLN Market Logo">
+      </div>
+      <div class="modal-header">
+        <h3>Entrar na sua conta</h3>
+        <button class="close-modal" id="closeLoginModal">×</button>
+      </div>
+      <form id="loginForm" class="modal-form">
+        <div class="form-group">
+          <label for="loginEmail">E-mail:</label>
+          <input type="email" id="loginEmail" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Senha:</label>
+          <input type="password" id="loginPassword" required>
+        </div>
+        <button type="submit" class="btn-primary">Entrar</button>
+      </form>
+      <div class="modal-footer">
+        <p>Não tem uma conta? <a href="#" id="showRegisterModal">Cadastre-se aqui</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Cadastro -->
+  <div class="modal-overlay" id="registerModal">
+    <div class="modal-content">
+      <div class="modal-logo">
+        <img src="commons/logo_adln.png" alt="ADLN Market Logo">
+      </div>
+      <div class="modal-header">
+        <h3>Criar nova conta</h3>
+        <button class="close-modal" id="closeRegisterModal">×</button>
+      </div>
+      <form id="registerForm" class="modal-form">
+        <div class="form-group">
+          <label for="registerName">Nome completo:</label>
+          <input type="text" id="registerName" required>
+        </div>
+        <div class="form-group">
+          <label for="registerEmail">E-mail:</label>
+          <input type="email" id="registerEmail" required>
+        </div>
+        <div class="form-group">
+          <label for="registerPassword">Senha:</label>
+          <input type="password" id="registerPassword" required>
+          <small class="password-help">Mínimo 10 caracteres com números, letras e símbolos</small>
+        </div>
+        <div class="form-group">
+          <label for="registerProfile">Perfil:</label>
+          <select id="registerProfile" required>
+            <option value="">Selecione um perfil</option>
+            <option value="cliente">Cliente</option>
+            <option value="vendedor">Vendedor</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-primary">Criar Conta</button>
+      </form>
+      <div class="modal-footer">
+        <p>Já tem uma conta? <a href="#" id="showLoginModal">Faça login aqui</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Perfil -->
+  <div class="modal-overlay" id="profileModal">
+    <div class="modal-content">
+      <div class="modal-logo">
+        <img src="commons/logo_adln.png" alt="ADLN Market Logo">
+      </div>
+      <div class="modal-header">
+        <h3>Meu Perfil</h3>
+        <button class="close-modal" id="closeProfileModal">×</button>
+      </div>
+      <form id="profileForm" class="modal-form">
+        <div class="form-group">
+          <label for="profileName">Nome completo:</label>
+          <input type="text" id="profileName" required>
+        </div>
+        <div class="form-group">
+          <label for="profileEmail">E-mail:</label>
+          <input type="email" id="profileEmail" required>
+        </div>
+        <div class="form-group">
+          <label for="profilePassword">Nova senha (deixe em branco para manter):</label>
+          <input type="password" id="profilePassword">
+          <small class="password-help">Mínimo 10 caracteres com números, letras e símbolos</small>
+        </div>
+        <div class="form-group">
+          <label for="profileProfile">Perfil:</label>
+          <input type="text" id="profileProfile" readonly>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Salvar Alterações</button>
+          <button type="button" class="btn-danger" id="deleteAccountBtn">Excluir Conta</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Página de Detalhes do Produto -->
+  <div class="product-detail-page" id="productDetailPage" style="display: none;">
+    <div class="product-detail-container">
+      <div class="product-detail-header">
+        <button class="back-btn" id="backToProducts">← Voltar</button>
+        <h2>Detalhes do Produto</h2>
+      </div>
+      <div id="productDetailContent" class="product-detail-body">
+        <!-- Conteúdo será preenchido dinamicamente -->
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Modal de Meus Pedidos -->
+  <div class="modal-overlay" id="ordersModal">
+    <div class="modal-content large">
+      <div class="modal-header">
+        <h3>Meus Pedidos</h3>
+        <button class="close-modal" id="closeOrdersModal">×</button>
+      </div>
+      <div id="ordersContent" class="modal-form">
+        <!-- Conteúdo será preenchido dinamicamente -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Endereços -->
+  <div class="modal-overlay" id="addressModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Endereços de Entrega</h3>
+        <button class="close-modal" id="closeAddressModal">×</button>
+      </div>
+      <div id="addressContent" class="modal-form">
+        <!-- Conteúdo será preenchido dinamicamente -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Frete e Entrega -->
+  <div class="modal-overlay" id="shippingModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Frete e Entrega</h3>
+        <button class="close-modal" id="closeShippingModal">×</button>
+      </div>
+      <div id="shippingModalContent" class="modal-form">
+        <!-- Conteúdo será preenchido dinamicamente -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Formas de Pagamento -->
+  <div class="modal-overlay" id="paymentModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="paymentModalTitle">Formas de Pagamento</h3>
+        <button class="close-modal" id="closePaymentModal">×</button>
+      </div>
+      <div id="paymentModalContent" class="modal-form">
+        <!-- Conteúdo será preenchido dinamicamente -->
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
+
