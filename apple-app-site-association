@@ -1,0 +1,27 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "ADLN-Market-PWA",
+        "paths": [
+          "*",
+          "/",
+          "/index.html",
+          "/cart.html",
+          "/category.html"
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": [
+      "ADLN-Market-PWA"
+    ]
+  },
+  "activitycontinuation": {
+    "apps": [
+      "ADLN-Market-PWA"
+    ]
+  }
+}
