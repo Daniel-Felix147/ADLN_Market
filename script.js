@@ -181,7 +181,7 @@ const API_BASE = 'https://catalogo-products.pages.dev';
         'Eletrônicos': 'commons/categorias/eletronicos.jpg',
         'Roupas': 'commons/categorias/roupas.jpg',
         'Casa e Jardim': 'commons/categorias/casa_e_jardim.jpg',
-        'Casa': 'commons/categorias/casa_e_jardim.jpg',
+        'Casa': 'commons/categorias/casa.jpg',
         'Jardim': 'commons/categorias/casa_e_jardim.jpg',
         'Esportes': 'commons/categorias/esportes.jpg',
         'Livros': 'commons/categorias/livros.jpg',
@@ -1258,37 +1258,37 @@ const API_BASE = 'https://catalogo-products.pages.dev';
     
     // Função para validar e corrigir URLs de imagem com interceptação de URLs malformadas
     function validateImageUrl(url) {
-      if (!url) return 'https://via.placeholder.com/150/2D3748/E2E8F0?text=IMG';
+      if (!url) return 'commons/categorias/outros.jpg';
+      
+      // Se é uma URL local (commons/categorias/...), retornar sem modificação
+      if (url.startsWith('commons/') || url.startsWith('./commons/') || url.startsWith('../commons/')) {
+        return url;
+      }
+      
+      // Se já é uma URL absoluta válida (começa com http), retornar sem modificação
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        // Se for placeholder.com, substituir por imagem local
+        if (url.includes('via.placeholder.com')) {
+          return 'commons/categorias/outros.jpg';
+        }
+        return url;
+      }
       
       // Interceptar URLs que são apenas strings malformadas começando com 'ffffff' ou similares
       if (url.startsWith('ffffff') || url.startsWith('www.') || url.match(/^[a-z]+\?text=/i)) {
         console.warn('[DEBUG] URL malformada detectada e corrigida:', url);
-        const textMatch = url.match(/text=(.+)$/i);
-        if (textMatch) {
-          const text = textMatch[1].replace(/([A-Z])/g, ' $1').trim();
-          return `https://via.placeholder.com/150/2D3748/E2E8F0?text=${encodeURIComponent(text)}`;
-        }
-        return 'https://via.placeholder.com/150/2D3748/E2E8F0?text=PRODUCT';
+        return 'commons/categorias/outros.jpg';
       }
       
       // Interceptar URLs que começam com protocolos inválidos
       if (url.startsWith('http://ffffff') || url.includes('://ffffff')) {
         console.warn('[DEBUG] URL com protocolo inválido detectada:', url);
-        const textMatch = url.match(/[?&]text=([^&]+)/i);
-        if (textMatch) {
-          const text = decodeURIComponent(textMatch[1]);
-          return `https://via.placeholder.com/150/2D3748/E2E8F0?text=${encodeURIComponent(text)}`;
-        }
-        return 'https://via.placeholder.com/150/2D3748/E2E8F0?text=PRODUCT';
+        return 'commons/categorias/outros.jpg';
       }
       
       // Interceptar qualquer URL que não seja válida e contenha apenas parâmetros 'text='
       if (url.includes('text=') && (!url.includes('via.placeholder.com') && !url.includes('unsplash.com') && !url.includes('googleusercontent.com'))) {
-        const textMatch = url.match(/[?&]text=([^&]+)/i);
-        if (textMatch) {
-          const text = decodeURIComponent(textMatch[1]);
-          return `https://via.placeholder.com/150/2D3748/E2E8F0?text=${encodeURIComponent(text)}`;
-        }
+        return 'commons/categorias/outros.jpg';
       }
       
       // Se a URL não tem protocolo mas parece ser uma URL válida, adicionar https://
@@ -1297,7 +1297,7 @@ const API_BASE = 'https://catalogo-products.pages.dev';
         if (url.includes('.') && !url.includes(' ')) {
           return `https://${url}`;
         }
-        return 'https://via.placeholder.com/150/2D3748/E2E8F0?text=IMG';
+        return 'commons/categorias/outros.jpg';
       }
       
       return url;
@@ -1403,7 +1403,7 @@ const API_BASE = 'https://catalogo-products.pages.dev';
       
       container.innerHTML = products.slice(0, 4).map(product => `
         <div class="quad-item">
-          <img src="${product.image}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/80x80/2D3748/E2E8F0?text=IMG'">
+          <img src="${product.image}" alt="${product.name}" onerror="this.src='commons/categorias/outros.jpg'">
           <span class="product-name">${product.name.length > 15 ? product.name.substring(0, 15) + '...' : product.name}</span>
         </div>
       `).join('');
@@ -1418,7 +1418,7 @@ const API_BASE = 'https://catalogo-products.pages.dev';
       const discount = Math.floor(Math.random() * 50) + 10; // Simular desconto
       
       container.innerHTML = `
-        <img src="${product.image}" alt="${product.name}" class="offer-image" onerror="this.src='https://via.placeholder.com/300x200/2D3748/E2E8F0?text=OFFER'">
+        <img src="${product.image}" alt="${product.name}" class="offer-image" onerror="this.src='commons/categorias/casa.jpg'">
         <div class="offer-info">
           <div class="offer-discount">${discount}% OFF</div>
           <div class="offer-description">${product.name}</div>
@@ -1470,7 +1470,7 @@ const API_BASE = 'https://catalogo-products.pages.dev';
       const product = products[0];
       
       container.innerHTML = `
-        <img src="${product.image}" alt="${product.name}" class="new-image" onerror="this.src='https://via.placeholder.com/300x200/2D3748/E2E8F0?text=NEW'">
+        <img src="${product.image}" alt="${product.name}" class="new-image" onerror="this.src='commons/categorias/eletronicos.jpg'">
         <div class="new-info">
           <div class="new-badge">NOVO</div>
           <div class="new-description">${product.name}</div>
