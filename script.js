@@ -18,23 +18,6 @@ const API_BASE = 'https://catalogo-products.pages.dev';
         autoPlayInterval: null,
         isPlaying: true
       },
-      // PWA State
-      pwa: {
-        isInstallable: false,
-        isInstalled: false,
-        isStandalone: false,
-        deferredPrompt: null,
-        offline: !navigator.onLine,
-        installPromptShown: localStorage.getItem('installPromptShown') || false
-      },
-      // Touch Gestures
-      touch: {
-        startY: 0,
-        startX: 0,
-        isScrolling: null,
-        pullToRefreshTriggered: false,
-        swipeThreshold: 50
-      }
     };
 
     const els = {
@@ -2501,39 +2484,8 @@ function closePaymentModal() {
       updateCartIcon(); // Atualizar ícone do carrinho
     }
     
-    // ===== FUNCIONALIDADES PWA =====
+    // ===== FUNCIONALIDADES MOBILE OTIMIZADAS =====
     
-    // Registrar Service Worker
-    function registerServiceWorker() {
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          // Verificar se estamos em ambiente de desenvolvimento local
-          if (location.protocol === 'file:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
-            console.log('[PWA] Ambiente de desenvolvimento detectado - Service Worker desabilitado para evitar erros CORS');
-            return;
-          }
-          
-          // Registrar Service Worker apenas em produção (HTTPS)
-          navigator.serviceWorker.register('/sw.js')
-            .then((registration) => {
-              console.log('[PWA] Service Worker registrado:', registration);
-              
-              // Verificar atualizações
-              registration.addEventListener('updatefound', () => {
-                const newWorker = registration.installing;
-                newWorker.addEventListener('statechange', () => {
-                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    showUpdateNotification();
-                  }
-                });
-              });
-            })
-            .catch((error) => {
-              console.warn('[PWA] Service Worker falhou:', error);
-            });
-        });
-      }
-    }
     
     // Detectar instalação PWA
     function detectPWAInstallation() {
@@ -2682,8 +2634,7 @@ function closePaymentModal() {
       document.addEventListener('touchstart', (e) => {
         startY = e.touches[0].clientY;
         startX = e.touches[0].clientX;
-        state.touch.startY = startY;
-        state.touch.startX = startX;
+        // Touch gesture handling simplified
       }, { passive: true });
       
       document.addEventListener('touchmove', (e) => {
@@ -2850,12 +2801,7 @@ function closePaymentModal() {
       loadCategories();
       updateCartIcon(); // Atualizar ícone do carrinho
       
-      // ===== INICIALIZAR FUNCIONALIDADES PWA =====
-      registerServiceWorker();
-      detectPWAInstallation();
-      initializeTouchGestures();
-      initializeConnectivityHandling();
-      requestNotificationPermission();
+      // ===== OTIMIZAÇÕES MOBILE =====
       optimizeForMobile();
       
       // ===== INICIALIZAR VALIDAÇÕES DE SENHA =====

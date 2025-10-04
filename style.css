@@ -4054,198 +4054,68 @@ body {
   }
 }
 
-/* ===== ESTILOS PWA - PROGRESSIVE WEB APP ===== */
+/* ===== OTIMIZAÇÕES MOBILE RESPONSIVAS ===== */
 
-/* Banner de instalação PWA */
-#pwa-install-banner {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(135deg, #00d084 0%, #00a86b 100%);
-  color: #ffffff;
-  padding: 12px 16px;
-  box-shadow: 0 4px 20px rgba(0, 208, 132, 0.3);
-  z-index: 10000;
-  animation: slideDownIn 0.3s ease-out;
+/* Touch-friendly buttons - Mobile Optimized */
+.btn-mobile-optimized {
+  min-height: 44px;
+  min-width: 44px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.pwa-banner-content {
+/* Mobile Responsiveness Improvements */
+@media (max-width: 768px) {
+  .mobile-device .card:hover {
+    transform: none;
+    box-shadow: inherit;
+  }
+
+  .mobile-device .categories-btn:hover,
+  .mobile-device .btn-login:hover,
+  .mobile-device .btn-register:hover {
+    transform: none;
+  }
+
+  .mobile-device .carousel-nav-btn:hover {
+    background: rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Enhanced Touch Interactions */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  max-width: 1200px;
-  margin: 0 auto;
+  justify-content: center;
 }
 
-.pwa-banner-icon {
-  font-size: 1.5rem;
-  flex-shrink: 0;
+/* Improved Mobile Forms */
+@media (max-width: 480px) {
+  .form-group input, .form-group select, .form-group textarea {
+    padding: 12px 16px;
+    font-size: 16px; /* Prevents zoom on iOS */
+    border-radius: 8px;
+  }
+  
+  .btn-primary, .btn-secondary {
+    padding: 14px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+  }
 }
 
-.pwa-banner-text {
-  flex: 1;
-  min-width: 0;
-}
-
-.pwa-banner-text strong {
-  display: block;
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-bottom: 2px;
-}
-
-.pwa-banner-text small {
-  display: block;
-  font-size: 0.75rem;
-  opacity: 0.9;
-}
-
-.pwa-banner-actions {
-  display: flex;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.pwa-banner-btn {
-  background: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.pwa-banner-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-1px);
-}
-
-.pwa-banner-btn.secondary {
-  background: transparent;
-  border-color: rgba(255, 255, 255, 0.5);
-  padding: 6px 8px;
-  min-width: 32px;
-}
-
-/* Notificação de update */
-.update-notification {
-  position: fixed;
-  top: 80px;
-  right: 20px;
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  color: #ffffff;
-  padding: 16px 20px;
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(37, 99, 235, 0.3);
-  z-index: 9999;
-  animation: slideInRight 0.3s ease-out;
-  max-width: 320px;
-}
-
-.update-content {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.update-text {
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.update-btn {
-  background: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.update-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-1px);
-}
-
-.update-btn.secondary {
-  background: transparent;
-  color: rgba(255, 255, 255, 0.8);
-  border-color: rgba(255, 255, 255, 0.4);
-}
-
-/* Indicador offline */
-.offline-indicator {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(135deg, #E53E3E 0%, #C53030 100%);
-  color: #ffffff;
-  padding: 8px 16px;
-  text-align: center;
-  font-size: 0.8rem;
-  font-weight: 500;
-  z-index: 9998;
-  animation: slideDownIn 0.3s ease-out;
-}
-
-/* Pull to refresh indicator */
-.pull-to-refresh-indicator {
-  position: fixed;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 208, 132, 0.9);
-  color: #ffffff;
-  padding: 12px 20px;
-  border-radius: 0 0 16px 16px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  z-index: 9999;
-  animation: bounceInDown 0.5s ease-out;
-  text-align: center;
-  min-width: 200px;
-}
-
-/* Performance Mobile */
-.mobile-device {
-  /* Adiciona classe quando detectado dispositivo mobile */
-}
-
-.mobile-device .card:hover {
-  transform: none;
-  box-shadow: inherit;
-}
-
-.mobile-device .categories-btn:hover,
-.mobile-device .btn-login:hover,
-.mobile-device .btn-register:hover {
-  transform: none;
-}
-
-.mobile-device .carousel-nav-btn:hover {
-  background: rgba(0, 0, 0, 0.5);
-}
-
-/* Status bar spacings para iOS */
+/* iOS Safe Area Support - Mobile Optimized */
 @supports (padding-top: env(safe-area-inset-top)) {
-  #pwa-install-banner {
-    padding-top: max(12px, env(safe-area-inset-top));
-  }
-  
-  .offline-indicator {
-    padding-top: max(8px, env(safe-area-inset-top));
-  }
-  
   .main-header {
     padding-top: max(12px, env(safe-area-inset-top));
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+  
+  .modal-content {
+    padding-top: max(20px, env(safe-area-inset-top));
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
   }
 }
 
@@ -4260,8 +4130,8 @@ body {
  scroll-behavior: smooth;
 }
 
-/* Disable text selection em elementos interface */
-button, .btn, .pwa-banner-btn, .update-btn {
+/* Enhanced Touch Interface */
+button, .btn {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -4406,5 +4276,112 @@ body.pull-to-refresh-ready {
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
+}
+
+/* ===== ULTRA RESPONSIVIDADE PARA TELAS PEQUENAS ===== */
+
+/* Ultra Responsividade - Telas Pequenas */
+@media (max-width: 375px) {
+  .main-header {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+  
+  .header-search-container {
+    margin-top: 10px;
+    padding: 0 5px;
+  }
+  
+  .search-wrapper {
+    gap: 6px;
+  }
+  
+  .search-wrapper input[type="text"] {
+    min-width: 100px;
+    font-size: 14px;
+  }
+  
+  .search-wrapper select {
+    min-width: 80px;
+    font-size: 14px;
+  }
+  
+  .search-wrapper button {
+    min-width: 40px;
+    padding: 8px;
+    font-size: 12px;
+  }
+  
+  .content-grid {
+    padding: 0 12px;
+    margin-top: -80px;
+  }
+  
+  .card {
+    padding: 16px;
+  }
+  
+  .card-title {
+    font-size: 1.1rem;
+  }
+}
+
+/* Breakpoints Personalizados para Melhor UX */
+@media (max-width: 320px) {
+  .hero-section {
+    padding: 20px 0;
+  }
+  
+  .carousel-container {
+    height: 160px;
+  }
+  
+  .wrap {
+    padding: 15px;
+  }
+  
+  .modal-content {
+    width: 95%;
+    margin: 10px auto;
+  }
+  
+  .btn-primary, .btn-secondary {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+}
+
+/* Optimized for One-Handed Use */
+@media (max-width: 414px) {
+  .header-nav-actions {
+    gap: 8px;
+  }
+  
+  .categories-btn,
+  .btn-login,
+  .btn-register {
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+  
+  .cart-icon-wrapper {
+    padding: 8px;
+    font-size: 16px;
+  }
+}
+
+/* Landscape Orientation Optimization */
+@media (max-width: 768px) and (orientation: landscape) {
+  .hero-section {
+    padding: 10px 0;
+  }
+  
+  .carousel-container {
+    height: 120px;
+  }
+  
+  .content-grid {
+    margin-top: -60px;
+  }
 }
   
