@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# PWA Files - Allow indexing
+Allow: /sw.js
+Allow: /commons/icons/manifest.json
+Allow: /apple-app-site-association
+
+# Sitemap for PWA
+Sitemap: https://adln-market.com/sitemap.xml
+
+# Crawl-delay for better performance
+Crawl-delay: 1
+
+# Disallow specific paths if needed
+# Disallow: /admin/
+# Disallow: /api/

@@ -4,7 +4,72 @@
   <meta charset="utf-8">
     <title>ADLN-Market - E-commerce Premium</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+  <!-- Favicon and App Icons for High-Quality Display Across All Devices -->
+  <link rel="icon" type="image/x-icon" href="commons/icons/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="commons/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="commons/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="57x57" href="commons/icons/favicon-57x57.png">
+  <link rel="icon" type="image/png" sizes="60x60" href="commons/icons/favicon-60x60.png">
+  <link rel="icon" type="image/png" sizes="70x70" href="commons/icons/favicon-70x70.png">
+  <link rel="icon" type="image/png" sizes="72x72" href="commons/icons/favicon-72x72.png">
+  <link rel="icon" type="image/png" sizes="76x76" href="commons/icons/favicon-76x76.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="commons/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="114x114" href="commons/icons/favicon-114x114.png">
+  <link rel="icon" type="image/png" sizes="120x120" href="commons/icons/favicon-120x120.png">
+  <link rel="icon" type="image/png" sizes="128x128" href="commons/icons/favicon-128x128.png">
+  <link rel="icon" type="image/png" sizes="144x144" href="commons/icons/favicon-144x144.png">
+  <link rel="icon" type="image/png" sizes="150x150" href="commons/icons/favicon-150x150.png">
+  <link rel="icon" type="image/png" sizes="152x152" href="commons/icons/favicon-152x152.png">
+  <link rel="icon" type="image/png" sizes="180x180" href="commons/icons/favicon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="commons/icons/favicon-192x192.png">
+  <link rel="icon" type="image/png" sizes="310x310" href="commons/icons/favicon-310x310.png">
+  <link rel="icon" type="image/png" sizes="384x384" href="commons/icons/favicon-384x384.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="commons/icons/favicon-512x512.png">
+  
+  <!-- Apple Touch Icons for iOS devices -->
+  <link rel="apple-touch-icon" sizes="57x57" href="commons/icons/favicon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="commons/icons/favicon-60x60.png">
+  <link rel="apple-touch-icon" sizes="70x70" href="commons/icons/favicon-70x70.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="commons/icons/favicon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="commons/icons/favicon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="commons/icons/favicon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="commons/icons/favicon-120x120.png">
+  <link rel="apple-touch-icon" sizes="128x128" href="commons/icons/favicon-128x128.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="commons/icons/favicon-144x144.png">
+  <link rel="apple-touch-icon" sizes="150x150" href="commons/icons/favicon-150x150.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="commons/icons/favicon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="commons/icons/favicon-180x180.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="commons/icons/favicon-192x192.png">
+  <link rel="apple-touch-icon" sizes="310x310" href="commons/icons/favicon-310x310.png">
+  <link rel="apple-touch-icon" sizes="384x384" href="commons/icons/favicon-384x384.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="commons/icons/favicon-512x512.png">
+  
+  <!-- Microsoft Tiles -->
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="commons/icons/favicon-144x144.png">
+  <meta name="msapplication-config" content="commons/icons/browserconfig.xml">
+  
+  <!-- Web App Manifest -->
+  <link rel="manifest" href="commons/icons/manifest.json">
+  
+  <!-- Additional Meta Tags for SEO and Mobile -->
+  <meta name="theme-color" content="#00d084">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ADLN-Market">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  
+  <!-- PWA Features -->
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="application-name" content="ADLN-Market">
+  <meta name="msapplication-tap-highlight" content="no">
+  
+  <!-- Viewport optimized for mobile -->
+  <meta name="viewport" content="width=device-width, minimal-ui, viewport-fit=cover, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -351,6 +416,11 @@
           <label for="registerPassword">Senha:</label>
           <input type="password" id="registerPassword" required>
           <small class="password-help">Mínimo 10 caracteres com números, letras e símbolos</small>
+        </div>
+        <div class="form-group">
+          <label for="registerConfirmPassword">Confirmar senha:</label>
+          <input type="password" id="registerConfirmPassword" required>
+          <small class="password-match-feedback" id="passwordMatchFeedback"></small>
         </div>
         <div class="form-group">
           <label for="registerProfile">Perfil:</label>
