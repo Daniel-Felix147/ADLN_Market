@@ -17,6 +17,23 @@ const API_BASE = 'https://catalogo-products.pages.dev';
         totalSlides: 4,
         autoPlayInterval: null,
         isPlaying: true
+      },
+      // PWA State
+      pwa: {
+        isInstallable: false,
+        isInstalled: false,
+        isStandalone: false,
+        deferredPrompt: null,
+        offline: !navigator.onLine,
+        installPromptShown: localStorage.getItem('installPromptShown') || false
+      },
+      // Touch Gestures
+      touch: {
+        startY: 0,
+        startX: 0,
+        isScrolling: null,
+        pullToRefreshTriggered: false,
+        swipeThreshold: 50
       }
     };
 
@@ -47,6 +64,7 @@ const API_BASE = 'https://catalogo-products.pages.dev';
       loginForm: document.getElementById('loginForm'),
       registerForm: document.getElementById('registerForm'),
       profileForm: document.getElementById('profileForm'),
+      passwordMatchFeedback: document.getElementById('passwordMatchFeedback'),
       closeLoginModal: document.getElementById('closeLoginModal'),
       closeRegisterModal: document.getElementById('closeRegisterModal'),
       closeProfileModal: document.getElementById('closeProfileModal'),
@@ -753,6 +771,9 @@ const API_BASE = 'https://catalogo-products.pages.dev';
       if (password.length < 10) {
         return 'Senha deve ter no mínimo 10 caracteres';
       }
+      if (password.length > 128) {
+        return 'Senha deve ter no máximo 128 caracteres';
+      }
       if (!/[0-9]/.test(password)) {
         return 'Senha deve conter pelo menos um número';
       }
@@ -762,7 +783,42 @@ const API_BASE = 'https://catalogo-products.pages.dev';
       if (!/[^a-zA-Z0-9]/.test(password)) {
         return 'Senha deve conter pelo menos um caractere especial';
       }
+      
+      // Validação adicional de senhas comuns
+      const commonPasswords = ['1234567890', 'password123', 'admin123456', 'qwerty1234'];
+      if (commonPasswords.includes(password.toLowerCase())) {
+        return 'Esta senha é muito comum. Escolha uma mais segura';
+      }
+      
       return null;
+    }
+    
+    // Calcular força da senha (opcional)
+    function calculatePasswordStrength(password) {
+      setTimeout(() => {
+        let strength = 0;
+        
+        if (password.length >= 10) strength += 1;
+        if (password.length >= 15) strength += 1;
+        if (password.length >= 20) strength += 1;
+        
+        if (/[a-z]/.test(password)) strength += 1;
+        if (/[A-Z]/.test(password)) strength += 1;
+        if (/[0-9]/.test(password)) strength += 1;
+        if (/[^a-zA-Z0-9]/.test(password)) strength += 1;
+        
+        const feedbackElement = els.passwordMatchFeedback;
+        if (feedbackElement && password.length > 0) {
+          const level = strength <= 3 ? 'weak' : strength <= 6 ? 'medium' : 'strong';
+          const text = strength <= 3 ? 'Frágil' : strength <= 6 ? 'Média' : 'Forte';
+          const color = strength <= 3 ? '#E53E3E' : strength <= 6 ? '#F6AD55' : '#00d084';
+          
+          // Adiciona feedback de força só se não há erro de confirmação
+          if (!feedbackElement.textContent.includes('✗') || feedbackElement.textContent.includes('✓')) {
+            feedbackElement.innerHTML += ` <small style="color: ${color};">• Força: ${text}</small>`;
+          }
+        }
+      }, 300);
     }
     
     // Verificar se email jÃ¡ existe
@@ -979,18 +1035,19 @@ const API_BASE = 'https://catalogo-products.pages.dev';
     };
     }
     
-    // FormulÃ¡rio de cadastro
+    // FormulÃ¡rio de cadastro com validação de confirmação de senha
     if (els.registerForm) {
     els.registerForm.onsubmit = (e) => {
       e.preventDefault();
       const name = document.getElementById('registerName').value;
       const email = document.getElementById('registerEmail').value;
       const password = document.getElementById('registerPassword').value;
+      const confirmPassword = document.getElementById('registerConfirmPassword').value;
       const profile = document.getElementById('registerProfile').value;
       
       // Validações
       if (emailExists(email)) {
-        showToast('E-mail jÃ¡ cadastrado no sistema');
+        showToast('E-mail já cadastrado no sistema');
         return;
       }
       
@@ -999,6 +1056,16 @@ const API_BASE = 'https://catalogo-products.pages.dev';
         showToast(passwordError);
         return;
       }
+      
+      // Validação de confirmação de senha
+      if (password !== confirmPassword) {
+        showToast('As senhas não coincidem. Por favor, verifique e tente novamente.');
+        highlightPasswordMismatch();
+        return;
+      }
+      
+      // Se as senhas coincidem, remove o destaque
+      clearPasswordMismatch();
       
       // Criar usuÃ¡rio
       const userData = {
@@ -1013,6 +1080,80 @@ const API_BASE = 'https://catalogo-products.pages.dev';
       closeRegisterModal();
       showToast('Conta criada com sucesso! Faça login para continuar.');
     };
+    }
+    
+    // Validação em tempo real da confirmação de senha
+    function initializePasswordValidation() {
+      const passwordInput = document.getElementById('registerPassword');
+      const confirmPasswordInput = document.getElementById('registerConfirmPassword');
+      const feedbackElement = els.passwordMatchFeedback;
+      
+      if (passwordInput && confirmPasswordInput && feedbackElement) {
+        // Validação em tempo real para ambos os campos
+        const validatePasswords = () => {
+          const password = passwordInput.value;
+          const confirmPassword = confirmPasswordInput.value;
+          
+          // Remover classes de estilo anteriores
+          passwordInput.classList.remove('success', 'error');
+          confirmPasswordInput.classList.remove('success', 'error');
+          
+          if (confirmPassword.length === 0) {
+            feedbackElement.textContent = '';
+            feedbackElement.className = 'password-match-feedback';
+            return;
+          }
+          
+          if (password === confirmPassword && password.length >= 10) {
+            feedbackElement.textContent = '✓ Senhas coincidem';
+            feedbackElement.className = 'password-match-feedback match-success';
+            passwordInput.classList.add('success');
+            confirmPasswordInput.classList.add('success');
+          } else if (password !== confirmPassword && password.length >= 10) {
+            feedbackElement.textContent = '✗ Senhas não coincidem';
+            feedbackElement.className = 'password-match-feedback match-error';
+            confirmPasswordInput.classList.add('error');
+          } else if (password.length < 10) {
+            feedbackElement.textContent = '✗ Senha muito curta (mín. 10 caracteres)';
+            feedbackElement.className = 'password-match-feedback match-error';
+            passwordInput.classList.add('error');
+            confirmPasswordInput.classList.add('error');
+          }
+        };
+        
+        passwordInput.addEventListener('input', () => {
+          validatePasswords();
+          calculatePasswordStrength(passwordInput.value);
+        });
+        confirmPasswordInput.addEventListener('input', validatePasswords);
+      }
+    }
+    
+    // Destacar campos de senha quando não coincidem
+    function highlightPasswordMismatch() {
+      const passwordInput = document.getElementById('registerPassword');
+      const confirmPasswordInput = document.getElementById('registerConfirmPassword');
+      
+      if (passwordInput && confirmPasswordInput) {
+        passwordInput.style.borderColor = '#E53E3E';
+        confirmPasswordInput.style.borderColor = '#E53E3E';
+        
+        setTimeout(() => {
+          passwordInput.style.borderColor = '';
+          confirmPasswordInput.style.borderColor = '';
+        }, 3000);
+      }
+    }
+    
+    // Remover destaque dos campos de senha
+    function clearPasswordMismatch() {
+      const passwordInput = document.getElementById('registerPassword');
+      const confirmPasswordInput = document.getElementById('registerConfirmPassword');
+      
+      if (passwordInput && confirmPasswordInput) {
+        passwordInput.style.borderColor = '';
+        confirmPasswordInput.style.borderColor = '';
+      }
     }
     
     // FormulÃ¡rio de perfil
@@ -1132,25 +1273,107 @@ const API_BASE = 'https://catalogo-products.pages.dev';
     
     // ===== FUNÃ‡Ã•ES PARA SEÃ‡Ã•ES DA HOME =====
     
-    // Função para validar e corrigir URLs de imagem
+    // Função para validar e corrigir URLs de imagem com interceptação de URLs malformadas
     function validateImageUrl(url) {
       if (!url) return 'https://via.placeholder.com/150/2D3748/E2E8F0?text=IMG';
       
-      // Se a URL não tem protocolo, adicionar https://
-      if (!url.startsWith('http://') && !url.startsWith('https://')) {
-        return `https://via.placeholder.com/150/2D3748/E2E8F0?text=IMG`;
+      // Interceptar URLs que são apenas strings malformadas começando com 'ffffff' ou similares
+      if (url.startsWith('ffffff') || url.startsWith('www.') || url.match(/^[a-z]+\?text=/i)) {
+        console.warn('[DEBUG] URL malformada detectada e corrigida:', url);
+        const textMatch = url.match(/text=(.+)$/i);
+        if (textMatch) {
+          const text = textMatch[1].replace(/([A-Z])/g, ' $1').trim();
+          return `https://via.placeholder.com/150/2D3748/E2E8F0?text=${encodeURIComponent(text)}`;
+        }
+        return 'https://via.placeholder.com/150/2D3748/E2E8F0?text=PRODUCT';
       }
       
-      // Se a URL parece ser apenas parâmetros de placeholder (sem via.placeholder.com), corrigir
-      if (url.includes('?text=') && !url.includes('via.placeholder.com') && !url.includes('http')) {
-        const textMatch = url.match(/\?text=(.+)/);
+      // Interceptar URLs que começam com protocolos inválidos
+      if (url.startsWith('http://ffffff') || url.includes('://ffffff')) {
+        console.warn('[DEBUG] URL com protocolo inválido detectada:', url);
+        const textMatch = url.match(/[?&]text=([^&]+)/i);
         if (textMatch) {
-          const text = textMatch[1];
+          const text = decodeURIComponent(textMatch[1]);
+          return `https://via.placeholder.com/150/2D3748/E2E8F0?text=${encodeURIComponent(text)}`;
+        }
+        return 'https://via.placeholder.com/150/2D3748/E2E8F0?text=PRODUCT';
+      }
+      
+      // Interceptar qualquer URL que não seja válida e contenha apenas parâmetros 'text='
+      if (url.includes('text=') && (!url.includes('via.placeholder.com') && !url.includes('unsplash.com') && !url.includes('googleusercontent.com'))) {
+        const textMatch = url.match(/[?&]text=([^&]+)/i);
+        if (textMatch) {
+          const text = decodeURIComponent(textMatch[1]);
           return `https://via.placeholder.com/150/2D3748/E2E8F0?text=${encodeURIComponent(text)}`;
         }
       }
       
+      // Se a URL não tem protocolo mas parece ser uma URL válida, adicionar https://
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        // Verificar se parece ser um domínio válido
+        if (url.includes('.') && !url.includes(' ')) {
+          return `https://${url}`;
+        }
+        return 'https://via.placeholder.com/150/2D3748/E2E8F0?text=IMG';
+      }
+      
       return url;
+    }
+    
+    // Interceptador global para detectar e corrigir URLs malformadas
+    function initializeUrlInterceptor() {
+      // Interceptar todos os elementos img criados ou modificados
+      const originalCreateElement = document.createElement;
+      document.createElement = function(tagName) {
+        const element = originalCreateElement.call(document, tagName);
+        if (tagName.toLowerCase() === 'img') {
+          const originalSetSrc = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src').set;
+          Object.defineProperty(element, 'src', {
+            set: function(value) {
+              const correctedValue = validateImageUrl(value);
+              if (correctedValue !== value) {
+                console.warn('[URL Fixer] Corrigindo URL malformada:', value, '→', correctedValue);
+              }
+              originalSetSrc.call(this, correctedValue);
+            },
+            get: function() {
+              return this.getAttribute('src');
+            },
+            configurable: true
+          });
+        }
+        return element;
+      };
+      
+      // Interceptar atribuições de innerHTML que possam conter URLs problemáticas
+      const originalInnerHTML = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML').set;
+      Object.defineProperty(Element.prototype, 'innerHTML', {
+        set: function(value) {
+          // Procurar por URLs problemáticas no HTML
+          let correctedValue = value;
+          const urlMatches = value.match(/src="[^"]*"/g);
+          if (urlMatches) {
+            urlMatches.forEach(match => {
+              const urlMatched = match.match(/src="([^"]*)"/);
+              if (urlMatched) {
+                const originalUrl = urlMatched[1];
+                const correctedUrl = validateImageUrl(originalUrl);
+                if (correctedUrl !== originalUrl) {
+                  console.warn('[URL Fixer] Corrigindo URL em innerHTML:', originalUrl, '→', correctedUrl);
+                  correctedValue = correctedValue.replace(match, match.replace(originalUrl, correctedUrl));
+                }
+              }
+            });
+          }
+          originalInnerHTML.call(this, correctedValue);
+        },
+        get: function() {
+          return this.innerHTML;
+        },
+        configurable: true
+      });
+      
+      console.log('[URL Fixer] Interceptador de URLs inicializado');
     }
     
     // Carregar produtos para as seções da home usando os produtos da seção principal
@@ -2276,6 +2499,370 @@ function closePaymentModal() {
       checkLoggedUser();
       loadCategories();
       updateCartIcon(); // Atualizar ícone do carrinho
+    }
+    
+    // ===== FUNCIONALIDADES PWA =====
+    
+    // Registrar Service Worker
+    function registerServiceWorker() {
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          // Verificar se estamos em ambiente de desenvolvimento local
+          if (location.protocol === 'file:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+            console.log('[PWA] Ambiente de desenvolvimento detectado - Service Worker desabilitado para evitar erros CORS');
+            return;
+          }
+          
+          // Registrar Service Worker apenas em produção (HTTPS)
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('[PWA] Service Worker registrado:', registration);
+              
+              // Verificar atualizações
+              registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    showUpdateNotification();
+                  }
+                });
+              });
+            })
+            .catch((error) => {
+              console.warn('[PWA] Service Worker falhou:', error);
+            });
+        });
+      }
+    }
+    
+    // Detectar instalação PWA
+    function detectPWAInstallation() {
+      // Verificar se estamos em ambiente de desenvolvimento local
+      if (location.protocol === 'file:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+        console.log('[PWA] Modo de desenvolvimento - funcionalidades PWA limitadas');
+        return;
+      }
+      
+      state.pwa.isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                               window.navigator.standalone ||
+                               document.referrer.includes('android-app://');
+      
+      // PWA install prompt
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        state.pwa.deferredPrompt = e;
+        state.pwa.isInstallable = true;
+        
+        // Mostrar prompt de instalação após delay
+        setTimeout(() => {
+          if (!state.pwa.isStandalone && !state.pwa.installPromptShown) {
+            showInstallBanner();
+          }
+        }, 3000);
+      });
+      
+      // Detecta quando PWA é instalada
+      window.addEventListener('appinstalled', () => {
+        state.pwa.isInstalled = true;
+        hideInstallBanner();
+        showNotification('App instalado com sucesso! 🎉', 'success');
+        localStorage.setItem('pwaInstalled', 'true');
+      });
+      
+      // Verificar se há update do PWA
+      let refreshing = false;
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (refreshing) return;
+          refreshing = true;
+          window.location.reload();
+        });
+      }
+    }
+    
+    // Banner de instalação PWA
+    function showInstallBanner() {
+      const banner = document.createElement('div');
+      banner.id = 'pwa-install-banner';
+      banner.innerHTML = `
+        <div class="pwa-banner-content">
+          <div class="pwa-banner-icon">📱</div>
+          <div class="pwa-banner-text">
+            <strong>Instale o ADLN-Market!</strong>
+            <small>Tenha acesso rápido e funcionalidade offline</small>
+          </div>
+          <div class="pwa-banner-actions">
+            <button class="pwa-banner-btn" id="pwa-install-btn">Instalar</button>
+            <button class="pwa-banner-btn secondary" id="pwa-dismiss-btn">✕</button>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(banner);
+      
+      // Event listeners
+      document.getElementById('pwa-install-btn').onclick = () => {
+        installPWA();
+        localStorage.setItem('installPromptShown', 'true');
+      };
+      
+      document.getElementById('pwa-dismiss-btn').onclick = () => {
+        hideInstallBanner();
+        localStorage.setItem('installPromptShown', 'true');
+      };
+      
+      // Auto-hide após 10 segundos
+      setTimeout(() => {
+        if (document.getElementById('pwa-install-banner')) {
+          hideInstallBanner();
+        }
+      }, 10000);
+    }
+    
+    function hideInstallBanner() {
+      const banner = document.getElementById('pwa-install-banner');
+      if (banner) {
+        banner.remove();
+      }
+    }
+    
+    function installPWA() {
+      if (state.pwa.deferredPrompt) {
+        state.pwa.deferredPrompt.prompt();
+        state.pwa.deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('[PWA] Usuário aceitou instalar');
+          } else {
+            console.log('[PWA] Usuário rejeitou instalação');
+          }
+          state.pwa.deferredPrompt = null;
+        });
+      }
+    }
+    
+    // Notificação de update
+    function showUpdateNotification() {
+      const notification = document.createElement('div');
+      notification.className = 'update-notification';
+      notification.innerHTML = `
+        <div class="update-content">
+          <span class="update-text">📦 Nova versão disponível!</span>
+          <button class="update-btn" id="update-btn">Atualizar</button>
+          <button class="update-btn secondary" id="dismiss-update">Mais tarde</button>
+        </div>
+      `;
+      
+      document.body.appendChild(notification);
+      
+      document.getElementById('update-btn').onclick = () => {
+        window.location.reload();
+      };
+      
+      document.getElementById('dismiss-update').onclick = () => {
+        notification.remove();
+      };
+      
+      // Auto-hide após 15 segundos
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.remove();
+        }
+      }, 15000);
+    }
+    
+    // ===== GESTOS DE TOQUE (TOUCH GESTURES) =====
+    
+    function initializeTouchGestures() {
+      let startY = 0;
+      let startX = 0;
+      let currentY = 0;
+      let currentX = 0;
+      let isScrolling;
+      
+      document.addEventListener('touchstart', (e) => {
+        startY = e.touches[0].clientY;
+        startX = e.touches[0].clientX;
+        state.touch.startY = startY;
+        state.touch.startX = startX;
+      }, { passive: true });
+      
+      document.addEventListener('touchmove', (e) => {
+        currentY = e.touches[0].clientY;
+        currentX = e.touches[0].clientX;
+        
+        const deltaY = currentY - startY;
+        const deltaX = currentX - startX;
+        
+        // Determinar se é scroll horizontal ou vertical
+        if (isScrolling === null) {
+          isScrolling = Math.abs(deltaX) > Math.abs(deltaY);
+        }
+        
+        // Pull to Refresh (apenas em mobile)
+        if (window.innerWidth <= 768 && !isScrolling && deltaY > 80 && window.scrollY <= 0) {
+          if (!state.touch.pullToRefreshTriggered) {
+            triggerPullToRefresh();
+          }
+        }
+        
+        // Swipe gestures para sidebar
+        if (window.innerWidth <= 768 && isScrolling && Math.abs(deltaX) > 30) {
+          if (deltaX > 0) {
+            // Swipe da esquerda para direita - abrir sidebar de categorias
+            if (!document.getElementById('categoriesSidebar').classList.contains('open')) {
+              openCategoriesSidebar();
+            }
+          } else if (deltaX < -30) {
+            // Swipe da direita para esquerda - fechar sidebar
+            if (document.getElementById('categoriesSidebar').classList.contains('open')) {
+              closeCategoriesSidebar();
+            }
+          }
+        }
+        
+      }, { passive: true });
+      
+      document.addEventListener('touchend', () => {
+        isScrolling = null;
+        state.touch.pullToRefreshTriggered = false;
+      }, { passive: true });
+    }
+    
+    function triggerPullToRefresh() {
+      state.touch.pullToRefreshTriggered = true;
+      
+      // Mostrar indicador visual
+      const refreshIndicator = document.createElement('div');
+      refreshIndicator.className = 'pull-to-refresh-indicator';
+      refreshIndicator.innerHTML = '🔄 Atualizando...';
+      document.body.insertBefore(refreshIndicator, document.body.firstChild);
+      
+      // Simular refresh
+      setTimeout(() => {
+        refreshIndicator.remove();
+        
+        // Recarregar dados
+        if (document.getElementById('productGrid')) {
+          loadProducts();
+        }
+        
+        // Mostrar feedback
+        showNotification('Conteúdo atualizado! ✨', 'success');
+      }, 1500);
+    }
+    
+    // ===== FUNÇÕES DE CONECTIVIDADE =====
+    
+    function initializeConnectivityHandling() {
+      // Status de conexão
+      window.addEventListener('online', () => {
+        state.pwa.offline = false;
+        hideOfflineIndicator();
+        showNotification('Conexão restaurada! 🌐', 'success');
+      });
+      
+      window.addEventListener('offline', () => {
+        state.pwa.offline = true;
+        showOfflineIndicator();
+      });
+      
+      // Verificar status inicial
+      if (state.pwa.offline) {
+        showOfflineIndicator();
+      }
+    }
+    
+    function showOfflineIndicator() {
+      if (document.getElementById('offline-indicator')) return;
+      
+      const indicator = document.createElement('div');
+      indicator.id = 'offline-indicator';
+      indicator.className = 'offline-indicator';
+      indicator.innerHTML = '📡 Você está offline - Modo offline ativado';
+      document.body.appendChild(indicator);
+    }
+    
+    function hideOfflineIndicator() {
+      const indicator = document.getElementById('offline-indicator');
+      if (indicator) {
+        indicator.remove();
+      }
+    }
+    
+    // ===== NOTIFICAÇÕES PUSH =====
+    
+    function requestNotificationPermission() {
+      if ('Notification' in window && 'serviceWorker' in navigator) {
+        Notification.requestPermission().then((permission) => {
+          if (permission === 'granted') {
+            console.log('[PWA] Permissão para notificações concedida');
+            // Registrar para push notifications aqui
+          }
+        });
+      }
+    }
+    
+    // ===== PERFORMANCE MOBILE =====
+    
+    function optimizeForMobile() {
+      if (window.innerWidth <= 768) {
+        // Desabilitar hover effects em mobile
+        document.body.classList.add('mobile-device');
+        
+        // Otimizar scroll
+        document.body.style.webkitOverflowScrolling = 'touch';
+        
+        // Prevenção de zoom duplo toque
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (e) => {
+          const now = (new Date()).getTime();
+          if (now - lastTouchEnd <= 300) {
+            e.preventDefault();
+          }
+          lastTouchEnd = now;
+        }, false);
+      }
+    }
+    
+    // Atualizar função de inicialização principal
+    function initializeApp() {
+      // Detectar qual página estamos e inicializar funcionalidades correspondentes
+      if (document.getElementById('productGrid')) {
+        // Página inicial (index.html)
+        loadProducts().then(() => {
+          loadHomeProducts(); // Carregar produtos para as seções da home após carregar os principais
+        });
+        startCarouselAutoPlay(); // Iniciar auto-play do carrossel
+      }
+      
+      if (document.getElementById('cartPageContainer')) {
+        // Página do carrinho (cart.html)
+        renderCartPage();
+      }
+      
+      if (document.getElementById('categoryProductGrid')) {
+        // Página de categoria (category.html)
+        initializeCategoryPage();
+      }
+      
+      // Funcionalidades comuns a todas as páginas
+      checkLoggedUser();
+      loadCategories();
+      updateCartIcon(); // Atualizar ícone do carrinho
+      
+      // ===== INICIALIZAR FUNCIONALIDADES PWA =====
+      registerServiceWorker();
+      detectPWAInstallation();
+      initializeTouchGestures();
+      initializeConnectivityHandling();
+      requestNotificationPermission();
+      optimizeForMobile();
+      
+      // ===== INICIALIZAR VALIDAÇÕES DE SENHA =====
+      initializePasswordValidation();
+      
+      // ===== INTERCEPTAÇÃO DE URLs MALFORMADAS =====
+      initializeUrlInterceptor();
     }
     
     // Inicializar quando o DOM estiver pronto
