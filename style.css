@@ -1,4 +1,34 @@
 ﻿
+/* ===== ZENITH IDENTITY VARIABLES ===== */
+:root {
+  /* Zenith Background Colors */
+  --bg-night-sky: #0a0a0f;
+  --bg-deep-midnight: #1a1d29;
+  --bg-dark-tone: #24272e;
+  --bg-accent-dark: #2d3142;
+  
+  /* Zenith Accent Colors */
+  --accent-teal: #00d084;
+  --accent-teal-dark: #00a86b;
+  --accent-pink: #ff6b9d;
+  --accent-pink-dark: #e55373;
+  
+  /* Zenith Text Colors */
+  --text-pure-white: #ffffff;
+  --text-light-steel: #e2e8f0;
+  --text-medium-steel: #a0aec0;
+  --text-dark-steel: #718096;
+  
+  /* Zenith UI Colors */
+  --shadow-teal: rgba(0, 208, 132, 0.2);
+  --shadow-pink: rgba(255, 107, 157, 0.2);
+  --overlay-dark: rgba(10, 10, 15, 0.95);
+  
+  /* Zenith Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--accent-teal) 0%, var(--accent-pink) 100%);
+  --gradient-background: linear-gradient(135deg, var(--bg-night-sky) 0%, var(--bg-deep-midnight) 50%, var(--bg-dark-tone) 100%);
+}
+
 * {
       margin: 0;
         padding: 0;
@@ -7,8 +37,8 @@
       
 body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #0a0a0f 0%, #1a1d29 50%, #24272e 100%);
-      color: #ffffff;
+      background: var(--gradient-background);
+      color: var(--text-pure-white);
       line-height: 1.5;
       margin: 0;
       padding: 0;
@@ -362,50 +392,209 @@ body {
       }
     }
     
-    @media (max-width: 768px) {
+/* ===== ZENITH HEADER MOBILE - AMAZON INSPIRED LAYOUT ===== */
+    @media screen and (max-width: 768px) {
+      /* Header Principal Amazon-Style */
       .main-header {
-        flex-wrap: wrap;
-        padding: 6px 15px;
-        gap: 10px;
-        min-height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 60px; /* Altura confortável Amazon */
+        padding: 0 15px; /* Padding horizontal reduzido */
+        background-color: var(--bg-night-sky);
+        backdrop-filter: blur(12px) saturate(1.2);
+        border-bottom: 1px solid var(--accent-teal);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
       }
       
-      .header-logo-container {
+      /* Menu Hambúrguer - Visível no Mobile */
+      .hamburger-menu {
+        display: block;
         order: 1;
         flex: 0 0 auto;
       }
       
-      .header-nav-actions {
+      /* Logo Centralizada Amazon-Style */
+      .header-logo-container {
         order: 2;
-        flex: 0 0 auto;
-        gap: 6px;
-      }
-      
-      .header-search-container {
-        order: 3;
-        flex: 1 1 100%;
-        max-width: 100%;
-        margin-top: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex: 1;
       }
       
       .logo-image {
-        height: 40px;
+        height: 32px;
+        max-height: 32px;
         background: transparent;
+        filter: drop-shadow(0 2px 4px var(--shadow-teal));
+      }
+      
+      /* Ícones de Ação Direita */
+      .header-nav-actions {
+        order: 3;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 0 0 auto;
+      }
+      
+      /* Categorias Button Icon */
+      .categories-btn {
+        display: none; /* Movido para menu lateral */
+      }
+      
+      /* User Menu Button */
+      .btn-login, .btn-register {
+        font-size: 12px;
+        padding: 8px 12px;
+        border-radius: 20px;
+        background: transparent;
+        border: 1px solid var(--accent-teal);
+        color: var(--accent-teal);
+        transition: all 0.3s ease;
+        min-width: 44px;
+        min-height: 44px;
+      }
+      
+      .btn-login:hover, .btn-register:hover {
+        background: var(--accent-teal);
+        color: var(--text-pure-white);
+        transform: scale(1.05);
+      }
+      
+      /* Carrinho Icon Amazon-Style */
+      .cart-icon-wrapper {
+        position: relative;
+        color: var(--text-pure-white);
+        font-size: 20px;
+        padding: 8px;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .cart-icon-wrapper:hover {
+        background: var(--overlay-dark);
+        color: var(--accent-teal);
+      }
+      
+      .cart-icon-bubble {
+        position: absolute;
+        top: -2px;
+        right: -2px;
+        background: var(--gradient-primary);
+        color: var(--text-pure-white);
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: pulse-glow 2s infinite;
+      }
+      
+      /* Barra de Pesquisa Abaixo do Header */
+      .header-search-container {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg-deep-midnight);
+        padding: 10px 15px;
+        border-bottom: 1px solid var(--bg-dark-tone);
+        box-shadow: 0 2px 8px var(--shadow-teal);
+        transform: translateY(-100%);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 999;
+      }
+      
+      .header-search-container.active {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      .search-wrapper {
+        display: flex;
+        gap: 8px;
+        align-items: center;
       }
       
       .search-wrapper input[type="text"] {
-        min-width: 140px;
+        flex: 1;
+        padding: 12px 16px;
+        font-size: 16px; /* Prevents iOS zoom */
+        background: var(--text-pure-white);
+        border: 2px solid var(--accent-teal);
+        border-radius: 25px;
+        color: var(--bg-night-sky);
+        outline: none;
+        transition: all 0.3s ease;
+        min-width: unset;
+      }
+      
+      .search-wrapper input[type="text"]:focus {
+        border-color: var(--accent-pink);
+        box-shadow: 0 0 4px var(--shadow-pink);
       }
       
       .search-wrapper select {
-        min-width: 100px;
+        padding: 12px 16px;
+        font-size: 14px;
+        background: var(--bg-dark-tone);
+        border: 2px solid var(--accent-teal);
+        border-radius: 25px;
+        color: var(--text-light-steel);
+        outline: none;
+        min-width: 120px;
       }
       
       .search-wrapper .btn-search,
       .search-wrapper .btn-reset {
-        min-width: 50px;
-        padding: 8px 10px;
-        font-size: 11px;
+        padding: 12px 20px;
+        font-size: 14px;
+        font-weight: 600;
+        border-radius: 25px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .search-wrapper .btn-search {
+        background: var(--gradient-primary);
+        color: var(--text-pure-white);
+      }
+      
+      .search-wrapper .btn-search:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px var(--shadow-teal);
+      }
+      
+      .search-wrapper .btn-reset {
+        background: var(--bg-dark-tone);
+        color: var(--text-medium-steel);
+        border: 2px solid var(--bg-dark-tone);
+      }
+      
+      .search-wrapper .btn-reset:hover {
+        border-color: var(--accent-pink);
+        color: var(--accent-pink);
       }
     }
     
@@ -756,17 +945,124 @@ body {
        }
      }
      
-     @media (max-width: 768px) {
+     /* ===== PRODUTOS MOBILE - LAYOUT VERTICAL AMAZON-STYLE ===== */
+     @media screen and (max-width: 768px) {
        .content-grid {
-         grid-template-columns: 1fr;
-         gap: 16px;
-         max-width: 400px;
+         display: flex;
+         flex-direction: column;
+         gap: 20px;
+         max-width: none;
          margin-top: -120px;
+         padding: 0 15px; /* Padding horizontal evitando encostar nas bordas */
        }
        
        .card {
-         height: 320px;
-         padding: 16px;
+         width: 100%;
+         max-width: none;
+         height: auto; /* Altura automática para se adaptar ao conteúdo */
+         padding: 20px; /* Padding interno maior para legibilidade */
+         margin: 0;
+       }
+       
+       .card-title {
+         font-size: 1.3rem; /* Fonte maior para legibilidade móvel */
+         margin-bottom: 12px;
+         color: var(--text-pure-white);
+         font-weight: 600;
+       }
+       
+       .card-content {
+         padding: 0;
+       }
+       
+       .quad-grid {
+         display: grid;
+         grid-template-columns: repeat(2, 1fr);
+         gap: 12px;
+       }
+       
+       .quad-item {
+         text-align: center;
+         padding: 12px;
+         border-radius: 12px;
+         background: var(--bg-deep-midnight);
+         border: 1px solid var(--bg-dark-tone);
+         transition: all 0.3s ease;
+       }
+       
+       .quad-item:hover {
+         border-color: var(--accent-teal);
+         background: var(--bg-accent-dark);
+       }
+       
+       .quad-item img {
+         width: 60px;
+         height: 60px;
+         border-radius: 8px;
+         margin-bottom: 8px;
+       }
+       
+       .product-name, .category-name {
+         font-size: 12px;
+         color: var(--text-light-steel);
+         font-weight: 500;
+       }
+       
+       .card-footer {
+         display: block;
+         margin-top: 16px;
+         padding: 12px 16px;
+         background: var(--gradient-primary);
+         color: var(--text-pure-white);
+         text-decoration: none;
+         border-radius: 8px;
+         text-align: center;
+         font-weight: 600;
+         transition: all 0.3s ease;
+       }
+       
+       .card-footer:hover {
+         transform: translateY(-2px);
+         box-shadow: 0 4px 12px var(--shadow-teal);
+       }
+       
+       /* Seções especiais melhoradas */
+       .offer-image, .new-image {
+         width: 100%;
+         height: 120px;
+         object-fit: cover;
+         border-radius: 12px;
+         margin-bottom: 12px;
+       }
+       
+       .offer-info, .new-info {
+         text-align: center;
+       }
+       
+       .offer-discount {
+         display: inline-block;
+         background: var(--accent-pink);
+         color: var(--text-pure-white);
+         padding: 6px 12px;
+         border-radius: 20px;
+         font-weight: 600;
+         font-size: 14px;
+         margin-bottom: 8px;
+       }
+       
+       .offer-description {
+         color: var(--text-medium-steel);
+         font-size: 13px;
+       }
+       
+       .new-badge {
+         background: var(--gradient-primary);
+         color: var(--text-pure-white);
+         padding: 4px 10px;
+         border-radius: 12px;
+         font-weight: 500;
+         font-size: 12px;
+         margin-bottom: 6px;
        }
      }
      
@@ -4054,7 +4350,156 @@ body {
   }
 }
 
-/* ===== OTIMIZAÇÕES MOBILE RESPONSIVAS ===== */
+/* ===== MENU HAMBÚRGUER AMAZON-INSPIRED + ZENITH IDENTITY ===== */
+
+/* Hambúrguer Menu Icon Professional */
+.hamburger-menu {
+  display: none; /* Hidden on desktop */
+  border: none;
+  background: transparent;
+  color: var(--text-pure-white);
+  font-size: 24px;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1001;
+}
+
+.hamburger-menu:hover {
+  background: var(--overlay-dark);
+  transform: scale(1.05);
+}
+
+.hamburger-menu span {
+  display: block;
+  width: 24px;
+  height: 3px;
+  background: var(--accent-teal);
+  margin: 4px 0;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+  position: relative;
+}
+
+.hamburger-menu.active span:nth-child(1) {
+  transform: rotate(45deg) translate(6px, 6px);
+  background: var(--accent-pink);
+}
+
+.hamburger-menu.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-menu.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+  background: var(--accent-pink);
+}
+
+/* Side Menu Amazon-Style */
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: 280px;
+  height: 100vh;
+  background: var(--bg-night-sky);
+  border-right: 2px solid var(--accent-teal);
+  box-shadow: 4px 0 20px var(--shadow-teal);
+  transition: left 0.3s ease;
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.side-menu.active {
+  left: 0;
+}
+
+.side-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--overlay-dark);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 999;
+}
+
+.side-menu-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.side-menu-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--bg-dark-tone);
+  background: var(--gradient-primary);
+}
+
+.side-menu-header h3 {
+  color: var(--text-pure-white);
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.side-menu-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  color: var(--text-pure-white);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.side-menu-content {
+  padding: 20px 0;
+}
+
+.menu-section {
+  margin-bottom: 20px;
+}
+
+.menu-section h4 {
+  color: var(--accent-teal);
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+  padding: 0 20px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  color: var(--text-light-steel);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  border-left: 3px solid transparent;
+}
+
+.menu-item:hover {
+  background: var(--bg-deep-midnight);
+  border-left-color: var(--accent-teal);
+  color: var(--text-pure-white);
+}
+
+.menu-item i {
+  margin-right: 12px;
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+}
 
 /* Touch-friendly buttons - Mobile Optimized */
 .btn-mobile-optimized {
@@ -4213,19 +4658,98 @@ button, .btn {
   }
 }
 
-/* Modal que cobre tela inteira em mobile PWA */
-@media (max-width: 768px) {
-  .mobile-device .modal-content {
-    margin: 0;
-    border-radius: 0;
-    height: 100vh;
-    max-height: 100vh;
-    max-width: 100%;
+/* ===== MODAIS MOBILE AMAZON-STYLE ===== */
+@media screen and (max-width: 768px) {
+  .modal-content {
+    width: 90%; /* Preenche quase toda a tela como Amazon */
+    max-width: none; /* Não limitado a larguras desktop */
+    margin: 20px auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 25px; /* Padding interno aumentrado para espacamento melhor */
+    border-radius: 16px;
+    background: var(--bg-night-sky);
+    border: 2px solid var(--accent-teal);
+    box-shadow: 0 10px 40px var(--shadow-teal);
+  }
+  
+  .modal-header h3 {
+    color: var(--accent-teal);
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+  
+  .modal-form .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .modal-form .form-group label {
+    color: var(--text-light-steel);
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+  }
+  
+  .modal-form .form-group input,
+  .modal-form .form-group select {
     width: 100%;
+    padding: 14px 16px;
+    font-size: 16px; /* Prevents iOS zoom */
+    background: var(--bg-deep-midnight);
+    border: 2px solid var(--bg-dark-tone);
+    border-radius: 10px;
+    color: var(--text-pure-white);
+    transition: all 0.3s ease;
+  }
+  
+  .modal-form .form-group input:focus,
+  .modal-form .form-group select:focus {
+    border-color: var(--accent-teal);
+    box-shadow: 0 0 8px var(--shadow-teal);
+    outline: none;
+  }
+  
+  .btn-primary {
+    background: var(--gradient-primary);
+    color: var(--text-pure-white);
+    padding: 16px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    width: 100%;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--shadow-teal);
+  }
+  
+  .modal-footer {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--bg-dark-tone);
+  }
+  
+  .modal-footer a {
+    color: var(--accent-teal);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .modal-footer a:hover {
+    color: var(--accent-pink);
   }
   
   .modal-overlay.active {
     backdrop-filter: blur(12px);
+    background: var(--overlay-dark);
   }
 }
 
@@ -4276,6 +4800,21 @@ body.pull-to-refresh-ready {
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
+}
+
+@keyframes pulse-glow {
+  0% { 
+    transform: scale(1);
+    box-shadow: 0 0 4px var(--shadow-teal);
+  }
+  50% { 
+    transform: scale(1.1);
+    box-shadow: 0 0 8px var(--accent-teal);
+  }
+  100% { 
+    transform: scale(1);
+    box-shadow: 0 0 4px var(--shadow-teal);
+  }
 }
 
 /* ===== ULTRA RESPONSIVIDADE PARA TELAS PEQUENAS ===== */

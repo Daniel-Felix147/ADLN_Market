@@ -2818,4 +2818,93 @@ function closePaymentModal() {
       initializeApp();
     }
     
+    // ===== MENU HAMBÚRGUER AMAZON-STYLE =====
+    const hamburgerMenu = document.getElementById('hamburgerMenu');
+    const sideMenu = document.getElementById('sideMenu');
+    const sideMenuOverlay = document.getElementById('sideMenuOverlay');
+    const sideMenuClose = document.getElementById('sideMenuClose');
+    
+    function toggleSideMenu() {
+        const wasActive = sideMenu.classList.contains('active');
+        
+        if (!wasActive) {
+            // Abrir menu
+            sideMenu.classList.add('active');
+            sideMenuOverlay.classList.add('active');
+            hamburgerMenu.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        } else {
+            // Fechar menu
+            closeSideMenu();
+        }
+    }
+    
+    function closeSideMenu() {
+        sideMenu.classList.remove('active');
+        sideMenuOverlay.classList.remove('active');
+        hamburgerMenu.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    // Event listeners para o menu hambúrguer
+    if (hamburgerMenu) {
+        hamburgerMenu.addEventListener('click', toggleSideMenu);
+    }
+    
+    if (sideMenuClose) {
+        sideMenuClose.addEventListener('click', closeSideMenu);
+    }
+    
+    if (sideMenuOverlay) {
+        sideMenuOverlay.addEventListener('click', closeSideMenu);
+    }
+    
+    // Fechar menu com ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && sideMenu.classList.contains('active')) {
+            closeSideMenu();
+        }
+    });
+    
+    // Barra de pesquisa toggle no mobile
+    function toggleSearchBar() {
+        const searchContainer = document.querySelector('.header-search-container');
+        if (searchContainer) {
+            searchContainer.classList.toggle('active');
+        }
+    }
+    
+    // Adicionar ícone de busca no header mobile que ativa a barra de pesquisa
+    function addMobileSearchIcon() {
+        if (window.innerWidth <= 768) {
+            const headerActions = document.querySelector('.header-nav-actions');
+            if (headerActions && !document.getElementById('mobileSearchBtn')) {
+                const searchBtn = document.createElement('button');
+                searchBtn.id = 'mobileSearchBtn';
+                searchBtn.innerHTML = '🔍';
+                searchBtn.className = 'cart-icon-wrapper';
+                searchBtn.style.fontSize = '18px';
+                searchBtn.title = 'Buscar';
+                searchBtn.addEventListener('click', toggleSearchBar);
+                
+                // Inserir antes do carrinho
+                const cartWrapper = headerActions.querySelector('.cart-icon-wrapper');
+                if (cartWrapper) {
+                    headerActions.insertBefore(searchBtn, cartWrapper);
+                } else {
+                    headerActions.appendChild(searchBtn);
+                }
+            }
+        } else {
+            const mobileSearchBtn = document.getElementById('mobileSearchBtn');
+            if (mobileSearchBtn) {
+                mobileSearchBtn.remove();
+            }
+        }
+    }
+    
+    // Executar quando a página carrear e quando a tela for redimensionada
+    window.addEventListener('resize', addMobileSearchIcon);
+    addMobileSearchIcon();
+    
     // Inicialização completa
