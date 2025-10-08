@@ -592,16 +592,22 @@ const API_BASE = 'https://catalogo-products.pages.dev';
         return;
       }
 
-      els.grid.innerHTML = products.map(p => `
+      els.grid.innerHTML = products.map(p => {
+        const safeImage = validateImageUrl(getProductImage(p));
+        const price = Number(p.price?.price_final || p.price_final || 0).toFixed(2);
+        const stock = p.stock?.quantity || p.stock_quantity || 0;
+        const brand = p.brand || '';
+        const category = p.category || '';
+        return `
         <div class="card">
-          <img src="${getProductImage(p)}" alt="${p.title}" loading="lazy">
+          <img src="${safeImage}" alt="${p.title}" loading="lazy" onerror="this.src='commons/categorias/outros.jpg'">
           <div class="title">${p.title}</div>
-          <div class="muted">${p.category || ''} • ${p.brand || ''}</div>
-          <div class="muted">Preço: R$ ${Number(p.price?.price_final || p.price_final || 0).toFixed(2)}</div>
-          <div class="muted">Estoque: ${p.stock?.quantity || p.stock_quantity || 0}</div>
+          <div class="muted">${category} • ${brand}</div>
+          <div class="muted">Preço: R$ ${price}</div>
+          <div class="muted">Estoque: ${stock}</div>
           <button class="btn primary" onclick="openProductDetailModal('${p.id}')">Comprar</button>
-        </div>
-      `).join('');
+        </div>`;
+      }).join('');
     }
 
     function renderPagination() {
@@ -804,47 +810,69 @@ const API_BASE = 'https://catalogo-products.pages.dev';
       }, 300);
     }
     
-    // Verificar se email jÃ¡ existe
+    // Utilitários de e-mail: normalização e consulta
+    function normalizeEmail(email) {
+      return (email || '').trim().toLowerCase();
+    }
+
+    // Validação de e-mail (formato e TLD válido)
+    function validateEmail(email) {
+      const value = (email || '').trim();
+      // Aceita user@dominio.tld com TLD de 2 a 24 letras
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[a-z]{2,24}$/i;
+      if (!emailRegex.test(value)) {
+        return 'E-mail inválido. Use o formato nome@dominio.com';
+      }
+      return null;
+    }
+
+    // Verificar se email já existe (normalizado)
     function emailExists(email) {
       const users = JSON.parse(localStorage.getItem('users') || '[]');
-      return users.some(user => user.email === email);
+      const normalized = normalizeEmail(email);
+      return users.some(user => user.email === normalized);
     }
     
-    // Salvar usuÃ¡rio
+    // Salvar usuário (armazenar e-mail normalizado)
     function saveUser(userData) {
       const users = JSON.parse(localStorage.getItem('users') || '[]');
-      users.push(userData);
+      const normalizedUser = { ...userData, email: normalizeEmail(userData.email) };
+      users.push(normalizedUser);
       localStorage.setItem('users', JSON.stringify(users));
     }
     
-    // Buscar usuÃ¡rio por email
+    // Buscar usuário por e-mail (normalizado)
     function findUserByEmail(email) {
       const users = JSON.parse(localStorage.getItem('users') || '[]');
-      return users.find(user => user.email === email);
+      const normalized = normalizeEmail(email);
+      return users.find(user => user.email === normalized);
     }
     
-    // Atualizar usuÃ¡rio
+    // Atualizar usuário (por e-mail normalizado)
     function updateUser(email, userData) {
       const users = JSON.parse(localStorage.getItem('users') || '[]');
-      const index = users.findIndex(user => user.email === email);
+      const normalizedEmail = normalizeEmail(email);
+      const index = users.findIndex(user => user.email === normalizedEmail);
       if (index !== -1) {
-        users[index] = { ...users[index], ...userData };
+        const nextEmail = userData.email ? normalizeEmail(userData.email) : users[index].email;
+        users[index] = { ...users[index], ...userData, email: nextEmail };
         localStorage.setItem('users', JSON.stringify(users));
         return true;
       }
       return false;
     }
     
-    // Excluir usuÃ¡rio
+    // Excluir usuário (por e-mail normalizado)
     function deleteUser(email) {
       const users = JSON.parse(localStorage.getItem('users') || '[]');
-      const filteredUsers = users.filter(user => user.email !== email);
+      const normalizedEmail = normalizeEmail(email);
+      const filteredUsers = users.filter(user => user.email !== normalizedEmail);
       localStorage.setItem('users', JSON.stringify(filteredUsers));
     }
     
-    // Login do usuÃ¡rio
+    // Login do usuário
     function loginUser(email, password) {
-      const user = findUserByEmail(email);
+      const user = findUserByEmail(normalizeEmail(email));
       if (!user) {
         return { success: false, message: 'E-mail não encontrado' };
       }
@@ -1007,6 +1035,16 @@ const API_BASE = 'https://catalogo-products.pages.dev';
       e.preventDefault();
       const email = document.getElementById('loginEmail').value;
       const password = document.getElementById('loginPassword').value;
+      clearInlineErrors([
+        'loginEmailError',
+        'loginPasswordError'
+      ]);
+      const emailFormatError = validateEmail(email);
+      if (emailFormatError) {
+        setInlineError('loginEmailError', emailFormatError);
+        highlightFieldError('loginEmail');
+        return;
+      }
       
       const result = loginUser(email, password);
       if (result.success) {
@@ -1014,41 +1052,79 @@ const API_BASE = 'https://catalogo-products.pages.dev';
         showToast(result.message);
       } else {
         showToast(result.message);
+        if (result.message.includes('E-mail')) {
+          setInlineError('loginEmailError', result.message);
+          highlightFieldError('loginEmail');
+        }
+        if (result.message.includes('Senha')) {
+          setInlineError('loginPasswordError', result.message);
+          highlightFieldError('loginPassword');
+        }
       }
     };
     }
     
-    // FormulÃ¡rio de cadastro com validação de confirmação de senha
+    // Formulário de cadastro com validação de confirmação de senha
     if (els.registerForm) {
     els.registerForm.onsubmit = (e) => {
       e.preventDefault();
       const name = document.getElementById('registerName').value;
-      const email = document.getElementById('registerEmail').value;
+        const emailInput = document.getElementById('registerEmail');
+        const email = normalizeEmail(emailInput.value);
       const password = document.getElementById('registerPassword').value;
       const confirmPassword = document.getElementById('registerConfirmPassword').value;
       const profile = document.getElementById('registerProfile').value;
+      clearInlineErrors([
+        'registerNameError',
+        'registerEmailError',
+        'registerPasswordError',
+        'registerConfirmPasswordError',
+        'registerProfileError'
+      ]);
       
       // Validações
+        const emailFormatError = validateEmail(email);
+        if (emailFormatError) {
+          showToast(emailFormatError);
+        setInlineError('registerEmailError', emailFormatError);
+          highlightFieldError('registerEmail');
+          return;
+        }
       if (emailExists(email)) {
         showToast('E-mail já cadastrado no sistema');
+        setInlineError('registerEmailError', 'E-mail já cadastrado no sistema');
+        highlightFieldError('registerEmail');
         return;
       }
       
       const passwordError = validatePassword(password);
       if (passwordError) {
         showToast(passwordError);
+        setInlineError('registerPasswordError', passwordError);
         return;
       }
       
       // Validação de confirmação de senha
       if (password !== confirmPassword) {
         showToast('As senhas não coincidem. Por favor, verifique e tente novamente.');
+        setInlineError('registerConfirmPasswordError', 'As senhas não coincidem.');
         highlightPasswordMismatch();
         return;
       }
       
       // Se as senhas coincidem, remove o destaque
       clearPasswordMismatch();
+
+        if (!name || name.trim().length < 3) {
+          setInlineError('registerNameError', 'Informe seu nome completo (mín. 3 caracteres).');
+          highlightFieldError('registerName');
+          return;
+        }
+        if (!profile) {
+          setInlineError('registerProfileError', 'Selecione um perfil.');
+          highlightFieldError('registerProfile');
+          return;
+        }
       
       // Criar usuÃ¡rio
       const userData = {
@@ -1139,16 +1215,33 @@ const API_BASE = 'https://catalogo-products.pages.dev';
       }
     }
     
-    // FormulÃ¡rio de perfil
+    // Formulário de perfil
     if (els.profileForm) {
     els.profileForm.onsubmit = (e) => {
       e.preventDefault();
       const name = document.getElementById('profileName').value;
-      const email = document.getElementById('profileEmail').value;
+        const email = normalizeEmail(document.getElementById('profileEmail').value);
       const password = document.getElementById('profilePassword').value;
       
       const updateData = { name, email };
+      clearInlineErrors(['profileEmailError']);
       
+        const emailFormatError = validateEmail(email);
+        if (emailFormatError) {
+          showToast(emailFormatError);
+        setInlineError('profileEmailError', emailFormatError);
+          highlightFieldError('profileEmail');
+          return;
+        }
+        
+        // Impedir troca de e-mail para um já existente (exceto o próprio)
+        if (email !== state.currentUser.email && emailExists(email)) {
+          showToast('E-mail já cadastrado por outro usuário');
+        setInlineError('profileEmailError', 'E-mail já cadastrado por outro usuário');
+          highlightFieldError('profileEmail');
+          return;
+        }
+
       // Se nova senha foi fornecida
       if (password) {
         const passwordError = validatePassword(password);
@@ -1329,7 +1422,9 @@ const API_BASE = 'https://catalogo-products.pages.dev';
       };
       
       // Interceptar atribuições de innerHTML que possam conter URLs problemáticas
-      const originalInnerHTML = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML').set;
+      const innerHTMLDescriptor = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
+      const originalInnerHTMLSetter = innerHTMLDescriptor.set;
+      const originalInnerHTMLGetter = innerHTMLDescriptor.get;
       Object.defineProperty(Element.prototype, 'innerHTML', {
         set: function(value) {
           // Procurar por URLs problemáticas no HTML
@@ -1348,10 +1443,10 @@ const API_BASE = 'https://catalogo-products.pages.dev';
               }
             });
           }
-          originalInnerHTML.call(this, correctedValue);
+          originalInnerHTMLSetter.call(this, correctedValue);
         },
         get: function() {
-          return this.innerHTML;
+          return originalInnerHTMLGetter.call(this);
         },
         configurable: true
       });
@@ -1476,6 +1571,31 @@ const API_BASE = 'https://catalogo-products.pages.dev';
           <div class="new-description">${product.name}</div>
         </div>
       `;
+    }
+
+    // Destaque de erro em campo específico
+    function highlightFieldError(inputId) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      const previous = input.style.borderColor;
+      input.setAttribute('aria-invalid', 'true');
+      input.style.borderColor = '#E53E3E';
+      setTimeout(() => {
+        input.style.borderColor = previous || '';
+        input.removeAttribute('aria-invalid');
+      }, 3000);
+    }
+
+    // Inline error helpers
+    function setInlineError(errorElementId, message) {
+      const el = document.getElementById(errorElementId);
+      if (el) {
+        el.textContent = message || '';
+      }
+    }
+
+    function clearInlineErrors(errorElementIds) {
+      (errorElementIds || []).forEach(id => setInlineError(id, ''));
     }
 
     // ===== INICIALIZAÃ‡ÃƒO =====
@@ -1836,6 +1956,8 @@ function closePaymentModal() {
         'Informática', 
         'Smartphones',
         'Casa e Jardim',
+        'Novidades',
+        'Ofertas',
         'Móveis',
         'Decoração',
         'Moda e Beleza',
@@ -1899,6 +2021,8 @@ function closePaymentModal() {
             'informática': ['informática', 'informatica', 'computadores', 'notebook', 'desktop', 'pc'],
             'smartphones': ['smartphones', 'smartphone', 'celular', 'telefone', 'mobile'],
             'casa e jardim': ['casa e jardim', 'casa', 'jardim', 'limpeza', 'organização'],
+            'novidades': ['novidades', 'novo', 'lançamento', 'lancamento', 'new'],
+            'ofertas': ['ofertas', 'promoção', 'promocao', 'desconto', 'sale'],
             'móveis': ['móveis', 'moveis', 'mesa', 'cadeira', 'sofá', 'sofa'],
             'decoração': ['decoração', 'decoracao', 'decoração', 'quadros', 'luminárias'],
             'moda e beleza': ['moda e beleza', 'moda', 'beleza', 'roupas', 'roupa', 'vestuário', 'cosméticos'],
@@ -1967,12 +2091,12 @@ function closePaymentModal() {
       productGrid.innerHTML = products.map(product => {
         const price = Number(product.price?.price_final || 0).toFixed(2);
         const stock = product.stock?.quantity || product.stock_quantity || 0;
-        const image = getProductImage(product);
+        const image = validateImageUrl(getProductImage(product));
         
         return `
           <div class="product-card" data-id="${product.id}">
             <div class="product-image">
-              <img src="${image}" alt="${product.title}" loading="lazy">
+              <img src="${image}" alt="${product.title}" loading="lazy" onerror="this.src='commons/categorias/outros.jpg'">
               <div class="product-overlay">
                 <button class="btn-quick-view" onclick="openProductDetailModal('${product.id}')">
                   Ver Detalhes

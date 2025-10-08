@@ -177,7 +177,7 @@
           <span class="product-name">Smartwatch</span>
         </div>
       </div>
-      <a href="#" class="card-footer">Ver mais produtos</a>
+      <a href="category.html?category=Eletrônicos" class="card-footer">Ver mais produtos</a>
     </div>
 
     <!-- Card 2: Ofertas Especiais -->
@@ -190,7 +190,7 @@
           <div class="offer-description">Produtos selecionados</div>
         </div>
       </div>
-      <a href="#" class="card-footer">Ver ofertas</a>
+      <a href="category.html?category=Ofertas" class="card-footer">Ver ofertas</a>
     </div>
 
     <!-- Card 3: Categorias Populares -->
@@ -222,7 +222,7 @@
           <span class="category-name">Esportes</span>
         </div>
       </div>
-      <a href="#" class="card-footer">Explorar categorias</a>
+      <a href="category.html?category=Eletrônicos" class="card-footer">Explorar categorias</a>
     </div>
 
     <!-- Card 4: Novos Lançamentos -->
@@ -235,7 +235,7 @@
           <div class="new-description">Produtos inovadores</div>
         </div>
       </div>
-      <a href="#" class="card-footer">Ver lançamentos</a>
+      <a href="category.html?category=Novidades" class="card-footer">Ver lançamentos</a>
     </div>
   </main>
 
@@ -427,11 +427,13 @@
       <form id="loginForm" class="modal-form">
         <div class="form-group">
           <label for="loginEmail">E-mail:</label>
-          <input type="email" id="loginEmail" required>
+          <input type="email" id="loginEmail" required aria-describedby="loginEmailError">
+          <small id="loginEmailError" class="field-error" aria-live="polite"></small>
         </div>
         <div class="form-group">
           <label for="loginPassword">Senha:</label>
-          <input type="password" id="loginPassword" required>
+          <input type="password" id="loginPassword" required aria-describedby="loginPasswordError">
+          <small id="loginPasswordError" class="field-error" aria-live="polite"></small>
         </div>
         <button type="submit" class="btn-primary">Entrar</button>
       </form>
@@ -454,29 +456,34 @@
       <form id="registerForm" class="modal-form">
         <div class="form-group">
           <label for="registerName">Nome completo:</label>
-          <input type="text" id="registerName" required>
+          <input type="text" id="registerName" required aria-describedby="registerNameError">
+          <small id="registerNameError" class="field-error" aria-live="polite"></small>
         </div>
         <div class="form-group">
           <label for="registerEmail">E-mail:</label>
-          <input type="email" id="registerEmail" required>
+          <input type="email" id="registerEmail" required aria-describedby="registerEmailError">
+          <small id="registerEmailError" class="field-error" aria-live="polite"></small>
         </div>
         <div class="form-group">
           <label for="registerPassword">Senha:</label>
-          <input type="password" id="registerPassword" required>
+          <input type="password" id="registerPassword" required aria-describedby="registerPasswordError">
           <small class="password-help">Mínimo 10 caracteres com números, letras e símbolos</small>
+          <small id="registerPasswordError" class="field-error" aria-live="polite"></small>
         </div>
         <div class="form-group">
           <label for="registerConfirmPassword">Confirmar senha:</label>
-          <input type="password" id="registerConfirmPassword" required>
+          <input type="password" id="registerConfirmPassword" required aria-describedby="registerConfirmPasswordError">
           <small class="password-match-feedback" id="passwordMatchFeedback"></small>
+          <small id="registerConfirmPasswordError" class="field-error" aria-live="polite"></small>
         </div>
         <div class="form-group">
           <label for="registerProfile">Perfil:</label>
-          <select id="registerProfile" required>
+          <select id="registerProfile" required aria-describedby="registerProfileError">
             <option value="">Selecione um perfil</option>
             <option value="cliente">Cliente</option>
             <option value="vendedor">Vendedor</option>
           </select>
+          <small id="registerProfileError" class="field-error" aria-live="polite"></small>
         </div>
         <button type="submit" class="btn-primary">Criar Conta</button>
       </form>
