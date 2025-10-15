@@ -143,10 +143,21 @@ const API_BASE = 'https://catalogo-products.pages.dev';
       return productImages['default'];
     }
 
-    function showToast(msg) {
+    function showToast(msg, type = 'info') {
+      if (!els.toast) return;
+      // Reset classes to base before applying the variant
+      els.toast.className = 'toast';
+      // Accessibility
+      els.toast.setAttribute('role', 'status');
+      els.toast.setAttribute('aria-live', 'polite');
+      // Apply variant class
+      const variantClass = type === 'success' ? 'toast--success' : type === 'error' ? 'toast--error' : 'toast--info';
+      els.toast.classList.add(variantClass);
       els.toast.textContent = msg;
       els.toast.classList.add('show');
-      setTimeout(() => els.toast.classList.remove('show'), 2500);
+      setTimeout(() => {
+        els.toast.classList.remove('show');
+      }, 2500);
     }
 
     // Funções do Sidebar de Categorias
@@ -874,12 +885,12 @@ const API_BASE = 'https://catalogo-products.pages.dev';
     function loginUser(email, password) {
       const user = findUserByEmail(normalizeEmail(email));
       if (!user) {
-        return { success: false, message: 'E-mail não encontrado' };
+        return { success: false, message: 'E-mail não encontrado.' };
       }
       
       const hashedPassword = hashPassword(password);
       if (user.password !== hashedPassword) {
-        return { success: false, message: 'Senha incorreta' };
+        return { success: false, message: 'Senha incorreta.' };
       }
       
       state.currentUser = user;
@@ -887,7 +898,7 @@ const API_BASE = 'https://catalogo-products.pages.dev';
       startInactivityTimer();
       updateUIForLoggedUser();
       
-      return { success: true, message: 'Login realizado com sucesso!' };
+      return { success: true, message: 'Login realizado com sucesso.' };
     }
     
     // Logout do usuÃ¡rio
@@ -1049,9 +1060,9 @@ const API_BASE = 'https://catalogo-products.pages.dev';
       const result = loginUser(email, password);
       if (result.success) {
         closeLoginModal();
-        showToast(result.message);
+        showToast('Login realizado com sucesso.', 'success');
       } else {
-        showToast(result.message);
+        showToast(result.message || 'Falha no login. Verifique seus dados e tente novamente.', 'error');
         if (result.message.includes('E-mail')) {
           setInlineError('loginEmailError', result.message);
           highlightFieldError('loginEmail');
@@ -1091,7 +1102,7 @@ const API_BASE = 'https://catalogo-products.pages.dev';
           return;
         }
       if (emailExists(email)) {
-        showToast('E-mail já cadastrado no sistema');
+        showToast('E-mail já cadastrado.', 'error');
         setInlineError('registerEmailError', 'E-mail já cadastrado no sistema');
         highlightFieldError('registerEmail');
         return;
@@ -1099,14 +1110,14 @@ const API_BASE = 'https://catalogo-products.pages.dev';
       
       const passwordError = validatePassword(password);
       if (passwordError) {
-        showToast(passwordError);
+        showToast(passwordError, 'error');
         setInlineError('registerPasswordError', passwordError);
         return;
       }
       
       // Validação de confirmação de senha
       if (password !== confirmPassword) {
-        showToast('As senhas não coincidem. Por favor, verifique e tente novamente.');
+        showToast('As senhas não coincidem. Por favor, verifique e tente novamente.', 'error');
         setInlineError('registerConfirmPasswordError', 'As senhas não coincidem.');
         highlightPasswordMismatch();
         return;
@@ -1137,7 +1148,7 @@ const API_BASE = 'https://catalogo-products.pages.dev';
       
       saveUser(userData);
       closeRegisterModal();
-      showToast('Conta criada com sucesso! Faça login para continuar.');
+      showToast('Cadastro realizado com sucesso. Faça login para continuar.', 'success');
     };
     }
     

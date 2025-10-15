@@ -1988,6 +1988,23 @@ body {
       z-index: 3000;
     }
     
+    /* Toast variants */
+    .toast.toast--success {
+      background: #0a2a1b;
+      border-color: #1f8a4c;
+      color: #b6f3cf;
+    }
+    .toast.toast--error {
+      background: #2a0a0a;
+      border-color: #b23b3b;
+      color: #ffd1d1;
+    }
+    .toast.toast--info {
+      background: #0a1f2a;
+      border-color: #2b6cb0;
+      color: #cfe8ff;
+    }
+
     .toast.show {
       opacity: 1;
       transform: translateY(0);
